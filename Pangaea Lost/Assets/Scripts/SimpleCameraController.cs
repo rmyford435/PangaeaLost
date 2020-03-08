@@ -13,6 +13,8 @@ namespace UnityTemplateProjects
             public float y;
             public float z;
 
+            public float ass;
+
             public void SetFromTransform(Transform t)
             {
                 pitch = t.eulerAngles.x;
