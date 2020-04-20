@@ -7,10 +7,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     PlayerScript playerScript;
 
-
-    [SerializeField]
-    float ass = 0.0f;
-
     public bool facingRight = true;
     float leftRightFacing = 1;
 
