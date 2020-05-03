@@ -28,6 +28,8 @@ public class PlayerCollision : MonoBehaviour
     {
         print("PlayerCollision Starting");
         collider = GetComponent<CapsuleCollider>();
+
+        CalculateRaySpacing();
     }
 
     // Update is called once per frame
@@ -203,6 +205,7 @@ public class PlayerCollision : MonoBehaviour
 
     public void UpdateRaycastOrigins()
     {
+        Debug.Log("Inside UpdateRaycastOrigins");
         Bounds bounds = collider.bounds;
         bounds.Expand(skinWidth * -2);
 
@@ -214,6 +217,7 @@ public class PlayerCollision : MonoBehaviour
 
     public void CalculateRaySpacing()
     {
+        Debug.Log("Inside CalculateRaySpacing");
         Bounds bounds = collider.bounds;
         bounds.Expand(skinWidth * -2);
 

@@ -9,9 +9,6 @@ public class PlayerInput : MonoBehaviour
 
     internal bool isLeftPressed;
     internal bool isRightPressed;
-    internal bool isJumping;
-
-    
 
     // Start is called before the first frame update
     void Start()
@@ -25,30 +22,34 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             isLeftPressed = true;
+            playerScript.playerAnimate.isMoving = true;
+            Debug.Log("playerScript.isMoving = " + playerScript.playerAnimate.isMoving);
             Debug.Log("A key is pressed");
-        }
-        else
-        {
-            isLeftPressed = false;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             isRightPressed = true;
+            playerScript.playerAnimate.isMoving = true;
+            Debug.Log("playerScript.isMoving = " + playerScript.playerAnimate.isMoving);
             Debug.Log("D key is pressed");
         }
-        else
+
+        if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
         {
+            isLeftPressed = false;
             isRightPressed = false;
+            playerScript.playerAnimate.isMoving = false;
+            Debug.Log("playerScript.isMoving = " + playerScript.playerAnimate.isMoving);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
-            isJumping = true;
+            playerScript.playerAnimate.isJumping = true;
         }
         else
         {
-            isJumping = false;
+            playerScript.playerAnimate.isJumping = false;
         }
     }
 }

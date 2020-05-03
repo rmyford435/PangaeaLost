@@ -18,6 +18,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     internal PlayerCollision playerCollision;
 
+    [SerializeField]
+    internal PlayerAnimate playerAnimate;
+
     float speed;
     float walkSpeed = 1.5f;
     float runSpeed = 5f;
@@ -28,12 +31,18 @@ public class PlayerScript : MonoBehaviour
     const float WALK_SPEED = 1.5f;
 
     float gravity;
-    Vector3 velocity;
+    private Vector3 velocity;
     float jumpVelocity;
     public float jumpHeight = 4;
     public float timeToJumpApex = .4f;
 
     public Vector3 input;
+
+    public Vector3 Velocity
+    {
+        get => velocity;
+        //set => velocity = value;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -51,6 +60,8 @@ public class PlayerScript : MonoBehaviour
 
         speed = Mathf.Lerp(speed, WALK_SPEED, Time.deltaTime * 2f);
 
+        //velocity.z = Mathf.SmoothDamp(velocity.z, targetVelocityZ, ref velocityZSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
+
         velocity.z = input.z * speed;
 
         velocity.y += gravity * Time.fixedDeltaTime;
@@ -60,7 +71,7 @@ public class PlayerScript : MonoBehaviour
             velocity.y = 0;
         }
 
-        if (playerInput.isJumping && playerCollision.collisions.below)
+        if (playerAnimate.isJumping && playerCollision.collisions.below)
         {
             velocity.y = jumpVelocity;
         }
@@ -76,7 +87,7 @@ public class PlayerScript : MonoBehaviour
         }
 
 
-        Debug.Log("velocity.z = " + velocity.z);
+        //Debug.Log("velocity.z = " + velocity.z);
 
         playerMovement.Move(velocity * Time.deltaTime);
     }
