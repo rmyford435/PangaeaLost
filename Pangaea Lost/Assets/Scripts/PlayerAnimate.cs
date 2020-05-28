@@ -7,7 +7,7 @@ public class PlayerAnimate : MonoBehaviour
     [SerializeField]
     PlayerScript playerScript;
 
-    Animator animator;
+    public Animator animator;
 
     public bool isCrouching = false;
     public bool isMoving = false;
@@ -25,23 +25,28 @@ public class PlayerAnimate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(playerScript.input.z > 0 || playerScript.input.z < 0)
+        if(playerScript.directionalInput.z > 0 || playerScript.directionalInput.z < 0)
         {
-            Debug.Log("Inside animate walk");
-            Debug.Log("playerScript.isMoving = " + isMoving);
             animator.SetBool("isMoving", isMoving);
             animator.SetFloat("velocity.z", playerScript.Velocity.z);
         }
-        else if(playerScript.input.z == 0)
+        else if(playerScript.directionalInput.z == 0)
         {
-            Debug.Log("Inside not animate walk");
             animator.SetBool("isMoving", isMoving);
             animator.SetFloat("velocity.z", 0);
         }
 
-        if(isJumping)
+        /*if(isJumping && isGrounded)
         {
             animator.SetBool("isJumping", isJumping);
+            isGrounded = false;
+            animator.SetBool("isGrounded", isGrounded);
+        }*/
+
+        if (playerScript.playerCollision.collisions.below)
+        {
+            isGrounded = true;
+            animator.SetBool("isGrounded", isGrounded);
         }
     }
 }

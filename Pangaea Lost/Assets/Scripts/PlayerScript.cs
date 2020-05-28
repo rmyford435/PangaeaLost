@@ -21,22 +21,29 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     internal PlayerAnimate playerAnimate;
 
+    //[SerializeField]
+    //internal ItemCollision itemCollision;
+
+    //Walking/Running Variables
     float speed;
     float walkSpeed = 1.5f;
     float runSpeed = 5f;
-    float accelerationTimeAirborne = .2f;
-    float accelerationTimeGrounded = .1f;
 
     const float SPRINT_SPEED = 5.0f;
     const float WALK_SPEED = 1.5f;
 
+    //Jumping Variables
     float gravity;
     private Vector3 velocity;
-    float jumpVelocity;
-    public float jumpHeight = 4;
+    float maxJumpVelocity;
+    float minJumpVelocity;
+    public float maxJumpHeight = 4;
+    public float minJumpHeight = 1;
     public float timeToJumpApex = .4f;
+    float accelerationTimeAirborne = .1f;
+    float accelerationTimeGrounded = .01f;
 
-    public Vector3 input;
+    public Vector3 directionalInput;
 
     public Vector3 Velocity
     {
@@ -44,51 +51,68 @@ public class PlayerScript : MonoBehaviour
         //set => velocity = value;
     }
 
+    float velocityZSmoothing;
+
     // Start is called before the first frame update
     void Start()
-    {
-        print("PlayerScript Starting");
-
-        gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
-        jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+    { 
+        gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+        maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) + maxJumpVelocity);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        input = new Vector3(0f, Input.GetAxis("Vertical"), Input.GetAxis("Horizontal"));
+        CalculateVelocity();
 
-        speed = Mathf.Lerp(speed, WALK_SPEED, Time.deltaTime * 2f);
+        if (directionalInput.z < 0 && playerMovement.facingRight)
+        {
+            playerMovement.Flip();
+        }
 
-        //velocity.z = Mathf.SmoothDamp(velocity.z, targetVelocityZ, ref velocityZSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
+        if (directionalInput.z > 0 && !playerMovement.facingRight)
+        {
+            playerMovement.Flip();
+        }
 
-        velocity.z = input.z * speed;
+        //speed = Mathf.Lerp(speed, WALK_SPEED, Time.deltaTime * 2f);
+        //velocity.z = input.z * speed;
 
-        velocity.y += gravity * Time.fixedDeltaTime;
+        playerMovement.Move(velocity * Time.deltaTime);
 
         if (playerCollision.collisions.above || playerCollision.collisions.below)
         {
             velocity.y = 0;
         }
-
-        if (playerAnimate.isJumping && playerCollision.collisions.below)
-        {
-            velocity.y = jumpVelocity;
-        }
-
-        if (input.z < 0 && playerMovement.facingRight)
-        {
-            playerMovement.Flip();
-        }
-
-        if (input.z > 0 && !playerMovement.facingRight)
-        {
-            playerMovement.Flip();
-        }
-
-
-        //Debug.Log("velocity.z = " + velocity.z);
-
-        playerMovement.Move(velocity * Time.deltaTime);
     }
+
+    public void SetDirectionalInput(Vector3 input)
+    {
+        directionalInput = input;
+    }
+
+    public void OnJumpInputDown()
+    {
+        if (playerCollision.collisions.below)
+        {
+            velocity.y = maxJumpVelocity;
+        }
+    }
+
+    public void OnJumpInputUp()
+    {
+        if (velocity.y > minJumpVelocity)
+        {
+            velocity.y = minJumpVelocity;
+        }
+    }
+
+    void CalculateVelocity()
+    {
+        float targetVelocityZ = directionalInput.z * walkSpeed;
+        velocity.z = Mathf.SmoothDamp(velocity.z, targetVelocityZ, ref velocityZSmoothing, (playerCollision.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
+        velocity.y += gravity * Time.deltaTime;
+    }
+
 }

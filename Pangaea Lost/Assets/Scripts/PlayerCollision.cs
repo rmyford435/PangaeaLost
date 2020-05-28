@@ -7,15 +7,15 @@ public class PlayerCollision : MonoBehaviour
     [SerializeField]
     PlayerScript playerScript;
 
-    const float skinWidth = .015f; //inset for rays to shoot from on the player
+    const float skinWidth = .085f; //inset for rays to shoot from on the player
     public int horizontalRayCount = 4; //number of horizontal rays. Can be changed in editor and ray amounts and spacing will update
     public int verticalRayCount = 4; //number of vertical rays. Can be changed in editor and ray amounts and spacing will update
 
     float horizontalRaySpacing; //variable to hold spacing for horizontal rays
     float verticalRaySpacing; //variable to hold spacing for vertical rays
 
-    float maxClimbAngle = 80; //Maximum angle that player can climb/move
-    float maxDescendAngle = 80; //Maximum angle that player can descend/move
+    float maxClimbAngle = 50; //Maximum angle that player can climb/move
+    float maxDescendAngle = 70; //Maximum angle that player can descend/move
 
     CapsuleCollider collider; //variable for capsule collider attached to player
     RaycastOrigins raycastOrigins; // variable for raycasting origins. Struct is at the bottom that holds the raycasting positions.
@@ -26,7 +26,6 @@ public class PlayerCollision : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        print("PlayerCollision Starting");
         collider = GetComponent<CapsuleCollider>();
 
         CalculateRaySpacing();
@@ -35,7 +34,6 @@ public class PlayerCollision : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     //Function detects horizontal collisions. Shoots/detects collision based on the direction.
@@ -67,13 +65,14 @@ public class PlayerCollision : MonoBehaviour
 
             RaycastHit hit;
 
-            Debug.DrawRay(rayOrigin, rayDirection * directionZ * rayLength * 40, Color.yellow);
+            Debug.DrawRay(rayOrigin, rayDirection * directionZ * rayLength, Color.yellow);
 
             if (Physics.Raycast(rayOrigin, rayDirection * directionZ, out hit, rayLength, collisionMask))
             {
-                float slopeAngle = Vector3.Angle(hit.normal, Vector2.up);
+                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+                print(slopeAngle);
 
-                if (i == 0 && slopeAngle <= maxClimbAngle)
+                if (i == 0 && slopeAngle <= maxClimbAngle) //If i == 0 (which is the first horizontal ray casted from the bottom and the slopeAngle is less than or equal to the set maxClimbAngle
                 {
                     if (collisions.descendingSlope)
                     {
@@ -113,7 +112,7 @@ public class PlayerCollision : MonoBehaviour
     //Function detects vertical collisions. Shoots/detects collision based on the direction.
     public void VerticalCollisions(ref Vector3 velocity)
     {
-        Debug.Log("Inside Vertical Collision");
+        //Debug.Log("Inside Vertical Collision");
         float directionY = Mathf.Sign(velocity.y);
         float rayLength = Mathf.Abs(velocity.y) + skinWidth;
 
@@ -205,7 +204,6 @@ public class PlayerCollision : MonoBehaviour
 
     public void UpdateRaycastOrigins()
     {
-        Debug.Log("Inside UpdateRaycastOrigins");
         Bounds bounds = collider.bounds;
         bounds.Expand(skinWidth * -2);
 
@@ -217,7 +215,6 @@ public class PlayerCollision : MonoBehaviour
 
     public void CalculateRaySpacing()
     {
-        Debug.Log("Inside CalculateRaySpacing");
         Bounds bounds = collider.bounds;
         bounds.Expand(skinWidth * -2);
 
@@ -241,7 +238,9 @@ public class PlayerCollision : MonoBehaviour
 
         public bool climbingSlope;
         public bool descendingSlope;
+
         public float slopeAngle, slopeAngleOld;
+
         public Vector3 velocityOld;
 
         public void Reset()

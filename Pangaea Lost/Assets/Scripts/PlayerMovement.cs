@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        print("PlayerMovement Starting");
     }
 
     // Update is called once per frame
@@ -25,8 +24,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(Vector3 velocity)
     {
-        Debug.Log("Inside Move");
+        //Debug.Log("Inside Move");
         playerScript.playerCollision.UpdateRaycastOrigins();
+        //playerScript.itemCollision.UpdateRaycastOrigins();
         playerScript.playerCollision.collisions.Reset();
 
         playerScript.playerCollision.collisions.velocityOld = velocity;
