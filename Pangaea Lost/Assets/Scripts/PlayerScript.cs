@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-///========================================
-/// The Main Player Script
-///========================================
-
 public class PlayerScript : MonoBehaviour
 {
     //Store a reference to all the sub player scripts
@@ -13,78 +9,74 @@ public class PlayerScript : MonoBehaviour
     internal PlayerInput playerInput;
 
     [SerializeField]
-    internal PlayerMovement playerMovement;
-
-    [SerializeField]
-    internal PlayerCollision playerCollision;
-
-    [SerializeField]
     internal PlayerAnimate playerAnimate;
 
-    //[SerializeField]
-    //internal ItemCollision itemCollision;
+    CharacterController player;
 
-    //Walking/Running Variables
-    float speed;
-    float walkSpeed = 1.5f;
-    float runSpeed = 5f;
+    [SerializeField]
+    float walkSpeed = 2;
+    [SerializeField]
+    float runSpeed = 5;
+    [SerializeField]
+    public float animationSpeedPercent;
 
-    const float SPRINT_SPEED = 5.0f;
-    const float WALK_SPEED = 1.5f;
+    float velocityXSmoothing;
+    float targetVelocityX;
 
-    //Jumping Variables
-    float gravity;
-    private Vector3 velocity;
+    [SerializeField]
+    Vector3 velocity;
+
+    [SerializeField]
+    Vector3 directionalInput;
+
+    public float timeToJumpApex = .5f;
     float maxJumpVelocity;
     float minJumpVelocity;
     public float maxJumpHeight = 4;
     public float minJumpHeight = 1;
-    public float timeToJumpApex = .4f;
-    float accelerationTimeAirborne = .1f;
-    float accelerationTimeGrounded = .01f;
+    float accelerationTimeAirborne = .2f;
+    float accelerationTimeGrounded = .1f;
 
-    public Vector3 directionalInput;
 
-    public Vector3 Velocity
-    {
-        get => velocity;
-        //set => velocity = value;
-    }
+    float gravity;
+    float jumpVelocity;
 
-    float velocityZSmoothing;
+    public bool facingRight = true;
+    float leftRightFacing = 1;
+
 
     // Start is called before the first frame update
     void Start()
-    { 
+    {
+        player = GetComponent<CharacterController>();
+
         gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) + maxJumpVelocity);
     }
 
     // Update is called once per frame
+    void Update()
+    {
+    }
+
     void FixedUpdate()
     {
         CalculateVelocity();
 
-        if (directionalInput.z < 0 && playerMovement.facingRight)
+        print(animationSpeedPercent);
+
+        if (directionalInput.x < 0 && facingRight)
         {
-            playerMovement.Flip();
+            Flip();
         }
 
-        if (directionalInput.z > 0 && !playerMovement.facingRight)
+        if (directionalInput.x > 0 && !facingRight)
         {
-            playerMovement.Flip();
+            Flip();
         }
 
-        //speed = Mathf.Lerp(speed, WALK_SPEED, Time.deltaTime * 2f);
-        //velocity.z = input.z * speed;
-
-        playerMovement.Move(velocity * Time.deltaTime);
-
-        if (playerCollision.collisions.above || playerCollision.collisions.below)
-        {
-            velocity.y = 0;
-        }
+        player.Move(velocity * Time.deltaTime);
     }
 
     public void SetDirectionalInput(Vector3 input)
@@ -94,7 +86,7 @@ public class PlayerScript : MonoBehaviour
 
     public void OnJumpInputDown()
     {
-        if (playerCollision.collisions.below)
+        if (player.isGrounded)
         {
             velocity.y = maxJumpVelocity;
         }
@@ -108,11 +100,28 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+
     void CalculateVelocity()
     {
-        float targetVelocityZ = directionalInput.z * walkSpeed;
-        velocity.z = Mathf.SmoothDamp(velocity.z, targetVelocityZ, ref velocityZSmoothing, (playerCollision.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
-        velocity.y += gravity * Time.deltaTime;
+        targetVelocityX = ((playerAnimate.isRunning) ? runSpeed : walkSpeed) * directionalInput.x;  //calculates a target velocity for x to be used in the next line
+
+        //Applies a movement modifier, which starts at velociyt.x and goes to the target velocity for x. If the player is ground it applies the first smooth time and the second if it's false.
+        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (player.isGrounded) ? accelerationTimeGrounded : accelerationTimeAirborne);  
+
+        /*if(player.isGrounded)
+        {
+            velocity.y = 0;
+        }*/
+
+        animationSpeedPercent = ((playerAnimate.isRunning) ? 1 : .5f) * directionalInput.x;
+
+        velocity.y += gravity * Time.deltaTime; //calculates velocity.y (basically applying gravity)
     }
 
+    public void Flip()
+    {
+        leftRightFacing = leftRightFacing * -1;
+        facingRight = !facingRight;
+        this.transform.rotation = Quaternion.LookRotation(new Vector3(leftRightFacing, 0f, 0f), Vector3.up);
+    }
 }

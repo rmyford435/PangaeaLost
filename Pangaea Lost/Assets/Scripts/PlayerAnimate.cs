@@ -9,44 +9,26 @@ public class PlayerAnimate : MonoBehaviour
 
     public Animator animator;
 
-    public bool isCrouching = false;
-    public bool isMoving = false;
-    public bool isGrounded = false;
-    public bool isJumping = false;
-    public bool isFalling = false;
-    public bool isRunning = false;
+    public bool isRunning;
 
     // Start is called before the first frame update
     void Start()
     {
-        animator = this.GetComponent<Animator>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(playerScript.directionalInput.z > 0 || playerScript.directionalInput.z < 0)
+        if(isRunning)
         {
-            animator.SetBool("isMoving", isMoving);
-            animator.SetFloat("velocity.z", playerScript.Velocity.z);
+            animator.SetFloat("speedPercent", playerScript.animationSpeedPercent);
         }
-        else if(playerScript.directionalInput.z == 0)
+        else
         {
-            animator.SetBool("isMoving", isMoving);
-            animator.SetFloat("velocity.z", 0);
+            animator.SetFloat("speedPercent", playerScript.animationSpeedPercent);
         }
+        
 
-        /*if(isJumping && isGrounded)
-        {
-            animator.SetBool("isJumping", isJumping);
-            isGrounded = false;
-            animator.SetBool("isGrounded", isGrounded);
-        }*/
-
-        if (playerScript.playerCollision.collisions.below)
-        {
-            isGrounded = true;
-            animator.SetBool("isGrounded", isGrounded);
-        }
     }
 }
