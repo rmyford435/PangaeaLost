@@ -11,6 +11,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     internal PlayerAnimate playerAnimate;
 
+    [SerializeField]
+    internal PlayerCollision playerCollision;
+
     CharacterController player;
 
     [SerializeField]
@@ -29,11 +32,8 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     Vector3 directionalInput;
 
-    public float timeToJumpApex = .5f;
-    float maxJumpVelocity;
-    float minJumpVelocity;
-    public float maxJumpHeight = 4;
-    public float minJumpHeight = 1;
+    public float timeToJumpApex = .4f;
+    public float jumpHeight = 2;
     float accelerationTimeAirborne = .2f;
     float accelerationTimeGrounded = .1f;
 
@@ -44,15 +44,14 @@ public class PlayerScript : MonoBehaviour
     public bool facingRight = true;
     float leftRightFacing = 1;
 
+    public Inventory inventory;
 
     // Start is called before the first frame update
     void Start()
     {
         player = GetComponent<CharacterController>();
-
-        gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
-        maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
-        minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) + maxJumpVelocity);
+        gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+        jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
     }
 
     // Update is called once per frame
@@ -63,8 +62,10 @@ public class PlayerScript : MonoBehaviour
     void FixedUpdate()
     {
         CalculateVelocity();
+        playerCollision.UpdateRaycastOrigins();
+        playerCollision.HorizontalCollision(directionalInput);
 
-        print(animationSpeedPercent);
+        //print(animationSpeedPercent);
 
         if (directionalInput.x < 0 && facingRight)
         {
@@ -76,6 +77,11 @@ public class PlayerScript : MonoBehaviour
             Flip();
         }
 
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+        }
+
         player.Move(velocity * Time.deltaTime);
     }
 
@@ -84,38 +90,47 @@ public class PlayerScript : MonoBehaviour
         directionalInput = input;
     }
 
-    public void OnJumpInputDown()
+    public void Jump()
     {
-        if (player.isGrounded)
+        print("Jump function was called");
+        if(player.isGrounded)
         {
-            velocity.y = maxJumpVelocity;
+            print("Applying Jump Physics");
+            velocity.y = jumpVelocity;
+            print("velocity.y = " + velocity.y);
         }
     }
-
-    public void OnJumpInputUp()
-    {
-        if (velocity.y > minJumpVelocity)
-        {
-            velocity.y = minJumpVelocity;
-        }
-    }
-
 
     void CalculateVelocity()
     {
         targetVelocityX = ((playerAnimate.isRunning) ? runSpeed : walkSpeed) * directionalInput.x;  //calculates a target velocity for x to be used in the next line
 
         //Applies a movement modifier, which starts at velociyt.x and goes to the target velocity for x. If the player is ground it applies the first smooth time and the second if it's false.
-        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (player.isGrounded) ? accelerationTimeGrounded : accelerationTimeAirborne);  
+        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (player.isGrounded) ? accelerationTimeGrounded : accelerationTimeAirborne);
 
-        /*if(player.isGrounded)
+        /*if ((player.collisionFlags & CollisionFlags.Below) != 0)
         {
-            velocity.y = 0;
+            print("Touching ground!");
         }*/
 
-        animationSpeedPercent = ((playerAnimate.isRunning) ? 1 : .5f) * directionalInput.x;
+        //animationSpeedPercent = ((playerAnimate.isRunning) ? 1 : .5f) * directionalInput.x;
+        animationSpeedPercent = velocity.x * directionalInput.x;
+
+        /*if (player.isGrounded)
+       {
+           print("Is Grounded");
+           velocity.y = 0;
+       }*/
+
+        if ((player.collisionFlags & CollisionFlags.Below) != 0)
+        {
+            print("Touching ground!");
+            velocity.y = 0;
+        }
 
         velocity.y += gravity * Time.deltaTime; //calculates velocity.y (basically applying gravity)
+
+
     }
 
     public void Flip()
@@ -123,5 +138,16 @@ public class PlayerScript : MonoBehaviour
         leftRightFacing = leftRightFacing * -1;
         facingRight = !facingRight;
         this.transform.rotation = Quaternion.LookRotation(new Vector3(leftRightFacing, 0f, 0f), Vector3.up);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Inside OnTriggerEnter");
+        if (other.tag == "Item")
+        {
+            Debug.Log("Inside Comparision of tag");
+            inventory.AddItem(other.GetComponent<Item>());
+            Destroy(other.gameObject);
+        }
     }
 }

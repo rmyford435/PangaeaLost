@@ -21,7 +21,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            Debug.Log("Is Running");
+            //Debug.Log("Is Running");
             playerScript.playerAnimate.isRunning = true;
         }
         else
@@ -31,15 +31,11 @@ public class PlayerInput : MonoBehaviour
 
         playerScript.SetDirectionalInput(directionalInput);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+       /*if(Input.GetKeyDown(KeyCode.Space))
         {
-            playerScript.OnJumpInputDown();
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            playerScript.OnJumpInputUp();
-        }
+            print("Space bar was hit");
+            playerScript.Jump();
+        }*/
     }
 
     void FixedUpdate()
