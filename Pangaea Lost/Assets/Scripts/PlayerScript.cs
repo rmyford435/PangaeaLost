@@ -129,8 +129,6 @@ public class PlayerScript : MonoBehaviour
         }
 
         velocity.y += gravity * Time.deltaTime; //calculates velocity.y (basically applying gravity)
-
-
     }
 
     public void Flip()

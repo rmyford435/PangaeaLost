@@ -13,6 +13,8 @@ public class PlayerCollision : MonoBehaviour
     float horizontalRaySpacing;
 
     RaycastOrigins raycastOrigins;
+    
+    public float[] slopeAngle = new float[4];
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +22,7 @@ public class PlayerCollision : MonoBehaviour
         capCollider = GetComponent<CapsuleCollider>();
 
         CalculateRaySpacing();
+        print(slopeAngle.Length);
     }
 
     public void HorizontalCollision(Vector3 input)
@@ -34,12 +37,14 @@ public class PlayerCollision : MonoBehaviour
 
             if(playerScript.facingRight)
             {
+                print("Inside facing right");
                 rayDirection = Vector3.right;
                 rayOrigin = raycastOrigins.midRight;
             }
             else if(!playerScript.facingRight)
             {
-                rayDirection = Vector3.left;
+                print("Inside facing left");
+                rayDirection = Vector3.right;
                 rayOrigin = raycastOrigins.midLeft;
             }
 
@@ -47,14 +52,16 @@ public class PlayerCollision : MonoBehaviour
 
             RaycastHit hit;
 
-            Debug.DrawRay(rayOrigin, rayDirection * directionX * rayLength * 2, Color.red);
+            
+
+            Debug.DrawRay(rayOrigin, rayDirection * directionX * rayLength, Color.red);
 
             if(Physics.Raycast(rayOrigin, rayDirection * directionX, out hit, rayLength))
             {
-                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-                print(slopeAngle);
+                print(i);
+                slopeAngle[i] = Vector2.Angle(hit.normal, Vector2.up);
+                print(i + " " + slopeAngle[i]);
             }
-
             print("Inside for loop of horizontal collision");
         }
     }
