@@ -52,8 +52,6 @@ public class PlayerCollision : MonoBehaviour
 
             RaycastHit hit;
 
-            
-
             Debug.DrawRay(rayOrigin, rayDirection * directionX * rayLength, Color.red);
 
             if(Physics.Raycast(rayOrigin, rayDirection * directionX, out hit, rayLength))

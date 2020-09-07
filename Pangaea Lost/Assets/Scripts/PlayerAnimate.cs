@@ -10,6 +10,10 @@ public class PlayerAnimate : MonoBehaviour
     public Animator animator;
 
     public bool isRunning;
+<<<<<<< Updated upstream
+=======
+    public bool isJumping;
+>>>>>>> Stashed changes
 
     // Start is called before the first frame update
     void Start()

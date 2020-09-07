@@ -31,11 +31,25 @@ public class PlayerInput : MonoBehaviour
 
         playerScript.SetDirectionalInput(directionalInput);
 
+<<<<<<< Updated upstream
        /*if(Input.GetKeyDown(KeyCode.Space))
         {
             print("Space bar was hit");
             playerScript.Jump();
         }*/
+=======
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Inside GetKeyDown Space");
+            playerScript.OnJumpInputDown();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Debug.Log("Inside GetKeyUp Space");
+            playerScript.OnJumpInputUp();
+        }
+>>>>>>> Stashed changes
     }
 
     void FixedUpdate()

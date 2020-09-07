@@ -29,17 +29,33 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     Vector3 velocity;
 
+    private float _yVelocity;
+
     [SerializeField]
     Vector3 directionalInput;
 
+<<<<<<< Updated upstream
     public float timeToJumpApex = .4f;
     public float jumpHeight = 2;
     float accelerationTimeAirborne = .2f;
     float accelerationTimeGrounded = .1f;
+=======
+    private float maxJumpVelocity;
+    private float minJumpVelocity;
+>>>>>>> Stashed changes
 
+    private float maxJumpHeight = 4f;
+    private float minJumpHeight = 1f;
+    private float timeToJumpApex = .4f;
+    private float accelerationTimeAirborne = .1f;
+    private float accelerationTimeGrounded = .01f;
 
+    [SerializeField]
     float gravity;
+<<<<<<< Updated upstream
     float jumpVelocity;
+=======
+>>>>>>> Stashed changes
 
     public bool facingRight = true;
     float leftRightFacing = 1;
@@ -50,8 +66,10 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         player = GetComponent<CharacterController>();
-        gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
-        jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+        maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) + maxJumpVelocity);
+
     }
 
     // Update is called once per frame
@@ -77,12 +95,21 @@ public class PlayerScript : MonoBehaviour
             Flip();
         }
 
+<<<<<<< Updated upstream
         if(Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
 
         player.Move(velocity * Time.deltaTime);
+=======
+        /*if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+        }*/
+
+        //player.Move(velocity * Time.deltaTime);
+>>>>>>> Stashed changes
     }
 
     public void SetDirectionalInput(Vector3 input)
@@ -90,32 +117,54 @@ public class PlayerScript : MonoBehaviour
         directionalInput = input;
     }
 
-    public void Jump()
+    public void OnJumpInputDown()
     {
+<<<<<<< Updated upstream
         print("Jump function was called");
         if(player.isGrounded)
+=======
+        Debug.Log("Inside OnJumpInputDown");
+        if (player.isGrounded)
+>>>>>>> Stashed changes
         {
-            print("Applying Jump Physics");
-            velocity.y = jumpVelocity;
-            print("velocity.y = " + velocity.y);
+            Debug.Log("Jumping");
+            _yVelocity = maxJumpVelocity;
+            //velocity.y = maxJumpVelocity;
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    public void OnJumpInputUp()
+    {
+        Debug.Log("Inside OnJumpInputUp");
+        if (_yVelocity > minJumpHeight)
+        {
+            _yVelocity = minJumpVelocity;
+            //velocity.y = minJumpVelocity;
+        }
+    }
+
+>>>>>>> Stashed changes
     void CalculateVelocity()
     {
         targetVelocityX = ((playerAnimate.isRunning) ? runSpeed : walkSpeed) * directionalInput.x;  //calculates a target velocity for x to be used in the next line
 
         //Applies a movement modifier, which starts at velociyt.x and goes to the target velocity for x. If the player is ground it applies the first smooth time and the second if it's false.
         velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (player.isGrounded) ? accelerationTimeGrounded : accelerationTimeAirborne);
+<<<<<<< Updated upstream
 
         /*if ((player.collisionFlags & CollisionFlags.Below) != 0)
         {
             print("Touching ground!");
         }*/
+=======
+>>>>>>> Stashed changes
 
         //animationSpeedPercent = ((playerAnimate.isRunning) ? 1 : .5f) * directionalInput.x;
         animationSpeedPercent = velocity.x * directionalInput.x;
 
+<<<<<<< Updated upstream
         /*if (player.isGrounded)
        {
            print("Is Grounded");
@@ -125,10 +174,31 @@ public class PlayerScript : MonoBehaviour
         if ((player.collisionFlags & CollisionFlags.Below) != 0)
         {
             print("Touching ground!");
+=======
+        if (player.isGrounded)
+        {
+            //print("Grounded");
+            playerAnimate.isJumping = false;
+>>>>>>> Stashed changes
             velocity.y = 0;
+            //_yVelocity = 0;
         }
+<<<<<<< Updated upstream
 
         velocity.y += gravity * Time.deltaTime; //calculates velocity.y (basically applying gravity)
+=======
+        else
+        {
+            //print("Gravity");
+            _yVelocity += gravity * Time.deltaTime;
+            //velocity.y += gravity * Time.deltaTime;
+        }
+
+
+        velocity.y = _yVelocity;
+
+        player.Move(velocity * Time.deltaTime);
+>>>>>>> Stashed changes
     }
 
     public void Flip()
