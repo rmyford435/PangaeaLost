@@ -37,7 +37,7 @@ public class PlayerScript : MonoBehaviour
     private float maxJumpVelocity;
     private float minJumpVelocity;
 
-    private float maxJumpHeight = 4f;
+    private float maxJumpHeight = 3f;
     private float minJumpHeight = 1f;
     private float timeToJumpApex = .4f;
     private float accelerationTimeAirborne = .1f;
