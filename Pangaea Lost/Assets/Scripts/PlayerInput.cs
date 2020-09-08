@@ -54,6 +54,22 @@ public class PlayerInput : MonoBehaviour
         {
             playerScript.playerAnimate.isJumping = false;
         }
+		
+		//Ryan's New Jump Input
+		/*
+		if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Inside GetKeyDown Space");
+            playerScript.OnJumpInputDown();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Debug.Log("Inside GetKeyUp Space");
+            playerScript.OnJumpInputUp();
+        }
+		*/
+		
         //crouching
         if(Input.GetButtonDown("Crouch") && PlayerStats.crouchEnabled)
         {

@@ -51,9 +51,22 @@ public class PlayerScript : MonoBehaviour
     float accelerationTimeGrounded = .1f;
     [HideInInspector]public Vector3 jumpVector;
 
+	//New jump-related variables
+	/*
+	private float maxJumpVelocity;
+    private float minJumpVelocity;
+
+    private float maxJumpHeight = 4f;
+    private float minJumpHeight = 1f;
+    private float timeToJumpApex = .4f;
+    private float accelerationTimeAirborne = .1f;
+    private float accelerationTimeGrounded = .01f;
+
+	private float _yVelocity;
+	*/
 
     float gravity;
-    float jumpVelocity;
+    float jumpVelocity; //Can remove this for new jump code
 
     //dash-related variables
     bool currentlyDodging = false;
@@ -81,6 +94,14 @@ public class PlayerScript : MonoBehaviour
         player = GetComponent<CharacterController>();
         gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+		
+		//New gravity and jump-related calculations
+		/*
+		gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+        maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) + maxJumpVelocity);
+
+		*/
     }
 
     // Update is called once per frame
@@ -137,6 +158,31 @@ public class PlayerScript : MonoBehaviour
     {
         directionalInput = input;
     }
+
+	//New jump-related functions
+	/*
+	public void OnJumpInputDown()
+    {
+        Debug.Log("Inside OnJumpInputDown");
+        if (player.isGrounded)
+        {
+            Debug.Log("Jumping");
+            _yVelocity = maxJumpVelocity;
+            //velocity.y = maxJumpVelocity;
+        }
+    }
+
+    public void OnJumpInputUp()
+    {
+        Debug.Log("Inside OnJumpInputUp");
+        if (_yVelocity > minJumpHeight)
+        {
+            _yVelocity = minJumpVelocity;
+            //velocity.y = minJumpVelocity;
+        }
+    }
+
+	*/
 
     public void Jump()
     {
@@ -195,6 +241,27 @@ public class PlayerScript : MonoBehaviour
         {
             Jump();
         }
+		
+		//New jump-related continuous calculations
+		/*
+		if (player.isGrounded)
+        {
+            //print("Grounded");
+            playerAnimate.isJumping = false;
+            velocity.y = 0;
+            //_yVelocity = 0;
+        }
+        else
+        {
+            //print("Gravity");
+            _yVelocity += gravity * Time.deltaTime;
+            //velocity.y += gravity * Time.deltaTime;
+        }
+
+
+        velocity.y = _yVelocity;
+
+		*/
 
         if(movementEnabled)
         {
