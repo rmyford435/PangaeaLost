@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +10,7 @@ public class PlayerInput : MonoBehaviour
     [SerializeField]
     public PlayerStats PlayerStats;
 
-    [SerializeField]
+    [SerializeField] 
     Vector3 directionalInput;
 
     bool crouchActive = false;
