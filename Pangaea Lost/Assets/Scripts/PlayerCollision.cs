@@ -37,13 +37,13 @@ public class PlayerCollision : MonoBehaviour
 
             if(playerScript.facingRight)
             {
-                print("Inside facing right");
+                //print("Inside facing right");
                 rayDirection = Vector3.right;
                 rayOrigin = raycastOrigins.midRight;
             }
             else if(!playerScript.facingRight)
             {
-                print("Inside facing left");
+                //print("Inside facing left");
                 rayDirection = Vector3.right;
                 rayOrigin = raycastOrigins.midLeft;
             }
@@ -51,6 +51,8 @@ public class PlayerCollision : MonoBehaviour
             rayOrigin += Vector3.up * (horizontalRaySpacing * i);
 
             RaycastHit hit;
+
+            
 
             Debug.DrawRay(rayOrigin, rayDirection * directionX * rayLength, Color.red);
 
@@ -60,7 +62,7 @@ public class PlayerCollision : MonoBehaviour
                 slopeAngle[i] = Vector2.Angle(hit.normal, Vector2.up);
                 print(i + " " + slopeAngle[i]);
             }
-            print("Inside for loop of horizontal collision");
+            //print("Inside for loop of horizontal collision");
         }
     }
 

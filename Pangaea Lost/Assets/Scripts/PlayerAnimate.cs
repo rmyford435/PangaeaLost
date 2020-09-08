@@ -10,7 +10,14 @@ public class PlayerAnimate : MonoBehaviour
     public Animator animator;
 
     public bool isRunning;
+
     public bool isJumping;
+
+    public bool isDodging;
+    
+    public bool isCrouching;
+
+    public bool isFiringStance;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +36,23 @@ public class PlayerAnimate : MonoBehaviour
         {
             animator.SetFloat("speedPercent", playerScript.animationSpeedPercent);
         }
-        
+        if(isCrouching)
+        {
+            animator.SetBool("IsCrouching", true);
+        }
+        else
+        {
+            animator.SetBool("IsCrouching", false);
+        }
+
+        if(isFiringStance)
+        {
+            animator.SetBool("IsFiringStance", true);
+        }
+        else
+        {
+            animator.SetBool("IsFiringStance", false);
+        }
 
     }
 }
